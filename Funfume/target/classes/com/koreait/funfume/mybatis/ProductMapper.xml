@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Product">
+
+<resultMap type="Product" id="JoinProductProdictImg">
+	<id column="product_id" 		property="product_id"/>
+	<result column="brand_id" 		property="brand_id"/>
+	<result column="gender_id" 		property="gender_id"/>
+	<result column="product_name" 	property="product_name"/>
+	<result column="price" 			property="price"/>
+	<collection column="product_id" property="productImgs" javaType="java.util.List" select="ProductImg.selectAll"/>		
+</resultMap>
+
+<select id="selectAll" resultMap="JoinProductProdictImg">
+	select * from product
+</select>
+
+
+<select id="select" parameterType="int" resultMap="JoinProductProdictImg">
+	select * from product where product_id=#{product_id}
+</select>
+
+<select id="selectGender" parameterType="int" resultMap="JoinProductProdictImg">
+	select * from product where gender_id=#{gender_id}
+</select>
+
+<insert id="insert" parameterType="Product">
+	insert into product(brand_id, gender_id, product_name, price, introduction)
+	values(#{brand_id},#{gender_id},#{product_name},#{price},#{introduction})
+	
+		<selectKey keyColumn="product_id" order="AFTER" resultType="int" keyProperty="product_id">
+			<!-- select seq_product.currval as product_id from dual -->
+			select last_insert_id() as product_id 
+		</selectKey>
+
+</insert>
+
+<update id="update"  parameterType="Product">
+	update product set brand_id=#{brand_id},gender_id=#{gender_id},product_name=#{product_name},price=#{price},
+	introduction=#{introduction} where product_id=#{product_id}
+</update>
+
+<delete id="delete" parameterType="int">
+	delete from product where product_id=#{product_id}
+</delete>
+
+</mapper>
